@@ -15,7 +15,7 @@ public class Main
 
     public void start()
     {
-        new BoardInput();
+        new BoardInput(this.board);
     }
 
     public static void main(String[] args)
