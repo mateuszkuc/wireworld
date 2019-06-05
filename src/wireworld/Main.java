@@ -1,7 +1,5 @@
 package wireworld;
 
-import javax.swing.JFrame;
-
 public class Main
 {
     int[][] board;
