@@ -1,18 +1,29 @@
 package wireworld;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import javax.swing.JPanel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class Main
     extends JFrame
+    implements ActionListener
 {
     int[][] board;
     int ROWS = 32;
     int COLUMNS = 32;
     DrawingPanel dp;
+    boolean editRequested = true;
+
+    public void actionPerformed(ActionEvent e)
+    {
+        this.editRequested = true;
+    }
 
     public class DrawingPanel
             extends JPanel
@@ -57,10 +68,15 @@ public class Main
 
     public Main()
     {
+        setTitle("Symulacja WireWorld - Mateusz Kuc");
         this.board = new int[this.COLUMNS][this.ROWS];
         setDefaultCloseOperation(3);
         this.dp = new DrawingPanel(this.board);
-        getContentPane().add(this.dp);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(this.dp, "Center");
+        JButton j = new JButton("Stop | Edycja");
+        j.addActionListener(this);
+        getContentPane().add(j, "South");
     }
 
     public int[][] computeNextGeneration()
@@ -125,18 +141,22 @@ public class Main
 
     public void start()
     {
-        new BoardInput(this.board);
-        pack();
-        setVisible(true);
         for (;;)
         {
-            this.board = computeNextGeneration();
-            this.dp.repaint();
-            try
+            new BoardInput(this.board);
+            pack();
+            setVisible(true);
+            editRequested = false;
+            while (!editRequested)
             {
-                Thread.sleep(200L);
+                this.board = computeNextGeneration();
+                this.dp.repaint();
+                try
+                {
+                    Thread.sleep(200L);
+                }
+                catch (InterruptedException ex) {}
             }
-            catch (InterruptedException ex) {}
         }
     }
 
